@@ -9,7 +9,7 @@ https://wago.io/pu0TRID_Z
 https://wago.io/CCDwHUpmi
 https://wago.io/S1_IPN4sL
 
-[FFXIVUI_Installation_Guide.pdf](https://github.com/user-attachments/files/18562052/FFXIVUI_Installation_Guide.pdf)
+[FFXIVUI_Installation_Guide.pdf](https://github.com/user-attachments/files/18565656/FFXIVUI_Installation_Guide.pdf)
 
 To see the UI in action, check out https://www.youtube.com/watch?v=XKEMgeuCoSg
 

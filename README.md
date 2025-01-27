@@ -8,3 +8,4 @@ https://wago.io/pu0TRID_Z
 https://wago.io/CCDwHUpmi
 https://wago.io/S1_IPN4sL
 
+If you like what I do and want to support me, head to https://ko-fi.com/mojithemonk

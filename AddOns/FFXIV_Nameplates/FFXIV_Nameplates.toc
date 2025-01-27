@@ -1,0 +1,6 @@
+## Interface: 12000
+## Title: FFXIV_Nameplates
+## Notes: Displays unit nameplates similar to FFXIV.
+## Author: MojiTheMonk
+## Version: 1.0
+FFXIV_Nameplates.lua

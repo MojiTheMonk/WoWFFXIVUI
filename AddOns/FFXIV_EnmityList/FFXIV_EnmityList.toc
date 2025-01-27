@@ -1,0 +1,7 @@
+## Interface: 100105
+## Title: FFXIV Enmity List
+## Notes: Displays a list of enemies aggroed to the player similar to FFXIV.
+## Author: MojiTheMonk
+## Version: 1.0
+FFXIV_EnmityList.lua
+FFXIV_EnmityList.xml

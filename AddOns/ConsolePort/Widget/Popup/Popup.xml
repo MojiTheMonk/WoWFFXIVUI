@@ -1,0 +1,188 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
+	<Script file="Popup.lua"/>
+
+	<Frame name="CPPopupFrameBaseTemplate" virtual="true" inherits="CPFrameTemplate" mixin="CPPopupFrameBaseMixin">
+		<Size x="500" y="96"/>
+		<KeyValues>
+			<KeyValue key="tooltipOffsetX" value="70" type="number"/>
+			<KeyValue key="buttonOffsetX" value="-68" type="number"/>
+			<KeyValue key="nameOffsetX" value="20" type="number"/>
+			<Keyvalue key="nonExclusive" value="false" type="boolean"/>
+		</KeyValues>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString parentKey="Name" inherits="Fancy22Font" justifyH="LEFT">
+					<Size x="300" y="22"/>
+					<Color r="1" g="0.82" b="0" a="1"/>
+				</FontString>
+				<FontString parentKey="Desc" inherits="DialogButtonHighlightText" justifyH="LEFT">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="BOTTOMLEFT"/>
+						<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad method="OnLoad"/>
+		</Scripts>
+	</Frame>
+
+	<!-- Generic semi-opaque popup with close button -->
+	<Frame name="CPPopupFrameTemplate" virtual="true" inherits="CPPopupFrameBaseTemplate" mixin="CPPopupFrameMixin">
+		<Frames>
+			<Button parentKey="CloseButton" inherits="UIPanelCloseButtonNoScripts">
+				<Anchors>
+					<Anchor point="TOPRIGHT" x="-8" y="-8"/>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						self:GetParent():Hide()
+					</OnClick>
+				</Scripts>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString parentKey="Binding" inherits="GameFontNormal">
+							<Anchors>
+								<Anchor point="RIGHT" x="4" relativePoint="LEFT"/>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad method="OnLoad"/>
+			<OnShow method="OnShow"/>
+			<OnHide method="OnHide"/>
+		</Scripts>
+	</Frame>
+
+	<Frame name="CPPopupPortraitFrameTemplate" virtual="true" inherits="CPPopupFrameTemplate">
+		<KeyValues>
+			<KeyValue key="nameOffsetX" value="78" type="number"/>
+		</KeyValues>
+		<Layers>
+			<Layer level="OVERLAY">
+				<Texture parentKey="Border" atlas="auctionhouse-itemicon-border-gray">
+					<Size x="92" y="92"/>
+					<Anchors>
+						<Anchor point="TOPLEFT" x="-16" y="16"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<Texture parentKey="Icon">
+					<Size x="64" y="64"/>
+					<Anchors>
+						<Anchor point="CENTER" relativeKey="$parent.Border"/>
+					</Anchors>
+				</Texture>
+				<MaskTexture parentKey="Mask" file="Interface\Masks\CircleMaskScalable">
+					<Size x="64" y="64"/>
+					<Anchors>
+						<Anchor point="CENTER" relativeKey="$parent.Icon"/>
+					</Anchors>
+					<MaskedTextures>
+						<MaskedTexture childKey="Icon"/>
+					</MaskedTextures>
+				</MaskTexture>
+			</Layer>
+		</Layers>
+	</Frame>
+
+	<Frame name="CPPopupSubFrameTemplate" virtual="true">
+		<Size x="434" y="40"/>
+	</Frame>
+
+	<Button name="CPPopupButtonTemplate" virtual="true" inherits="InsecureActionButtonTemplate">
+		<Attributes>
+			<Attribute name="nodeignoremime" value="true" type="boolean"/>
+		</Attributes>
+		<Size x="434" y="32"/>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="Icon" file="Interface\QuestFrame\UI-Quest-BulletPoint">
+					<Size x="24" y="24"/>
+					<Anchors>
+						<Anchor point="LEFT" x="48" y="0"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<NormalTexture setAllPoints="true" snapToPixelGrid="true" texelSnappingBias="0.0" inherits="CPAtlas">
+			<KeyValues>
+				<KeyValue key="atlas" value="perks-list-hover" type="string"/>
+				<KeyValue key="useAtlasSize" value="false" type="boolean"/>
+				<KeyValue key="flipHorz" value="true" type="boolean"/>
+			</KeyValues>
+		</NormalTexture>
+		<HighlightTexture alphaMode="ADD" setAllPoints="true" snapToPixelGrid="true" texelSnappingBias="0.0" inherits="CPAtlas">
+			<TexCoords left="1" right="0" top="0" bottom="1"/>
+			<KeyValues>
+				<KeyValue key="atlas" value="perks-list-active" type="string"/>
+				<KeyValue key="useAtlasSize" value="false" type="boolean"/>
+				<KeyValue key="flipHorz" value="true" type="boolean"/>
+			</KeyValues>
+		</HighlightTexture>
+		<ButtonText parentKey="Text">
+			<Size x="275" y="0"/>
+			<Anchors>
+				<Anchor point="LEFT" x="78" y="0"/>
+			</Anchors>
+		</ButtonText>
+		<NormalFont style="GameFontNormalLeft"/>
+		<HighlightFont style="GameFontHighlightLeft"/>
+		<DisabledFont style="GameFontDisableLeft"/>
+	</Button>
+
+	<Frame name="CPPopupHeaderTemplate" virtual="true">
+		<Size x="434" y="38"/>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString parentKey="Text" inherits="GameFontNormalLarge">
+					<Color color="LIGHTGRAY_FONT_COLOR"/>
+					<Size x="0" y="38"/>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</FontString>
+				<Texture parentKey="BarTexture" inherits="CPAtlas">
+					<Size y="3"/>
+					<Anchors>
+						<Anchor point="LEFT"/>
+						<Anchor point="RIGHT"/>
+					</Anchors>
+					<KeyValues>
+						<KeyValue key="atlas" value="perks-divider" type="string"/>
+						<KeyValue key="useAtlasSize" value="false" type="boolean"/>
+						<KeyValue key="flipHorz" value="true" type="boolean"/>
+					</KeyValues>
+				</Texture>
+				<MaskTexture parentKey="BarMask" file="Interface\AddOns\ConsolePort\Assets\Textures\Frame\TransparentSquareMask" vWrapMode="CLAMPTOBLACK" hWrapMode="CLAMPTOBLACK">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.Text" x="-5" y="0"/>
+						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.Text" x="5" y="0"/>
+					</Anchors>
+					<MaskedTextures>
+						<MaskedTexture childKey="BarTexture"/>
+					</MaskedTextures>
+				</MaskTexture>
+			</Layer>
+		</Layers>
+	</Frame>
+
+	<Button name="CPPopupBindingCatchButtonTemplate" virtual="true" mixin="CPPopupBindingCatchButtonMixin" hidden="true">
+		<Scripts>
+			<OnGamePadButtonDown method="OnGamePadButtonDown"/>
+			<OnKeyDown method="OnKeyDown"/>
+			<OnUpdate method="OnUpdate"/>
+			<OnShow method="OnShow"/>
+			<OnHide method="OnHide"/>
+			<OnClick method="OnClick"/>
+			<OnLoad method="OnLoad"/>
+		</Scripts>
+	</Button>
+	
+</Ui>

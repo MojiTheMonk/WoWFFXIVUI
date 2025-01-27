@@ -1,0 +1,9 @@
+## Interface: 40300
+## Title: Masque: FFXIV
+## Version: 1.0
+## Author: MojiTheMonk
+## Notes: FFXIV skin for Masque.
+## Dependencies: Masque
+## X-Category: Interface Enhancements
+
+FFXIV.lua

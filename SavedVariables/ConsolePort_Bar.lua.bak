@@ -1,0 +1,289 @@
+
+ConsolePort_BarPresets = {
+["FFXIV"] = {
+["children"] = {
+["Right"] = {
+["type"] = "Group",
+["opacity"] = "100",
+["width"] = 300,
+["override"] = "shown",
+["visibility"] = "[overridebar][mod:M2M1] hide; show",
+["modifier"] = "[] M2",
+["height"] = 120,
+["rescale"] = "[mod:M1] 94;[mod:M2M1] 87; [mod:M2] 99; 97",
+["children"] = {
+["PADDDOWN"] = {
+["type"] = "GroupButton",
+["pos"] = {
+["y"] = -25,
+["relPoint"] = "LEFT",
+["point"] = "LEFT",
+["x"] = 72,
+},
+},
+["PAD3"] = {
+["type"] = "GroupButton",
+["pos"] = {
+["y"] = 0,
+["relPoint"] = "RIGHT",
+["point"] = "RIGHT",
+["x"] = -86,
+},
+},
+["PAD4"] = {
+["type"] = "GroupButton",
+["pos"] = {
+["y"] = 25,
+["relPoint"] = "RIGHT",
+["point"] = "RIGHT",
+["x"] = -43,
+},
+},
+["PAD2"] = {
+["type"] = "GroupButton",
+["pos"] = {
+["y"] = 0,
+["relPoint"] = "RIGHT",
+["point"] = "RIGHT",
+["x"] = 0,
+},
+},
+["PAD1"] = {
+["type"] = "GroupButton",
+["pos"] = {
+["y"] = -25,
+["relPoint"] = "RIGHT",
+["point"] = "RIGHT",
+["x"] = -43,
+},
+},
+["PADDLEFT"] = {
+["type"] = "GroupButton",
+["pos"] = {
+["y"] = 0,
+["relPoint"] = "LEFT",
+["point"] = "LEFT",
+["x"] = 28,
+},
+},
+["PADDRIGHT"] = {
+["type"] = "GroupButton",
+["pos"] = {
+["y"] = 0,
+["relPoint"] = "LEFT",
+["point"] = "LEFT",
+["x"] = 115,
+},
+},
+["PADDUP"] = {
+["type"] = "GroupButton",
+["pos"] = {
+["y"] = 25,
+["relPoint"] = "LEFT",
+["point"] = "LEFT",
+["x"] = 72,
+},
+},
+},
+["pos"] = {
+["y"] = 110,
+["strata"] = "MEDIUM",
+["offsetscale"] = false,
+["point"] = "BOTTOM",
+["level"] = 2,
+["x"] = 130,
+["relPoint"] = "BOTTOM",
+},
+},
+["Left"] = {
+["type"] = "Group",
+["opacity"] = "100",
+["width"] = 300,
+["override"] = "shown",
+["visibility"] = "[vehicleui][overridebar][mod:M2M1] hide; show",
+["modifier"] = "[] M1",
+["height"] = 120,
+["rescale"] = "[mod:M2] 94;[mod:M2M1] 87; [mod:M1] 99; 97",
+["children"] = {
+["PADDDOWN"] = {
+["type"] = "GroupButton",
+["pos"] = {
+["y"] = -25,
+["relPoint"] = "LEFT",
+["point"] = "LEFT",
+["x"] = 72,
+},
+},
+["PAD3"] = {
+["type"] = "GroupButton",
+["pos"] = {
+["y"] = 0,
+["relPoint"] = "RIGHT",
+["point"] = "RIGHT",
+["x"] = -86,
+},
+},
+["PAD4"] = {
+["type"] = "GroupButton",
+["pos"] = {
+["y"] = 25,
+["relPoint"] = "RIGHT",
+["point"] = "RIGHT",
+["x"] = -43,
+},
+},
+["PAD2"] = {
+["type"] = "GroupButton",
+["pos"] = {
+["y"] = 0,
+["relPoint"] = "RIGHT",
+["point"] = "RIGHT",
+["x"] = 0,
+},
+},
+["PAD1"] = {
+["type"] = "GroupButton",
+["pos"] = {
+["y"] = -25,
+["relPoint"] = "RIGHT",
+["point"] = "RIGHT",
+["x"] = -43,
+},
+},
+["PADDLEFT"] = {
+["type"] = "GroupButton",
+["pos"] = {
+["y"] = 0,
+["relPoint"] = "LEFT",
+["point"] = "LEFT",
+["x"] = 28,
+},
+},
+["PADDRIGHT"] = {
+["type"] = "GroupButton",
+["pos"] = {
+["y"] = 0,
+["relPoint"] = "LEFT",
+["point"] = "LEFT",
+["x"] = 115,
+},
+},
+["PADDUP"] = {
+["type"] = "GroupButton",
+["pos"] = {
+["y"] = 25,
+["relPoint"] = "LEFT",
+["point"] = "LEFT",
+["x"] = 72,
+},
+},
+},
+["pos"] = {
+["y"] = 110,
+["strata"] = "MEDIUM",
+["offsetscale"] = false,
+["point"] = "BOTTOM",
+["level"] = 2,
+["x"] = -160,
+["relPoint"] = "BOTTOM",
+},
+},
+["Center"] = {
+["type"] = "Group",
+["opacity"] = "100",
+["width"] = 300,
+["override"] = "shown",
+["visibility"] = "[vehicleui][overridebar] hide; [mod:M2M1] show; hide",
+["modifier"] = "[] M2M1",
+["height"] = 120,
+["rescale"] = "97",
+["children"] = {
+["PADDDOWN"] = {
+["type"] = "GroupButton",
+["pos"] = {
+["y"] = -25,
+["relPoint"] = "LEFT",
+["point"] = "LEFT",
+["x"] = 72,
+},
+},
+["PAD3"] = {
+["type"] = "GroupButton",
+["pos"] = {
+["y"] = 0,
+["relPoint"] = "RIGHT",
+["point"] = "RIGHT",
+["x"] = -86,
+},
+},
+["PAD4"] = {
+["type"] = "GroupButton",
+["pos"] = {
+["y"] = 25,
+["relPoint"] = "RIGHT",
+["point"] = "RIGHT",
+["x"] = -43,
+},
+},
+["PAD2"] = {
+["type"] = "GroupButton",
+["pos"] = {
+["y"] = 0,
+["relPoint"] = "RIGHT",
+["point"] = "RIGHT",
+["x"] = 0,
+},
+},
+["PAD1"] = {
+["type"] = "GroupButton",
+["pos"] = {
+["y"] = -25,
+["relPoint"] = "RIGHT",
+["point"] = "RIGHT",
+["x"] = -43,
+},
+},
+["PADDLEFT"] = {
+["type"] = "GroupButton",
+["pos"] = {
+["y"] = 0,
+["relPoint"] = "LEFT",
+["point"] = "LEFT",
+["x"] = 28,
+},
+},
+["PADDRIGHT"] = {
+["type"] = "GroupButton",
+["pos"] = {
+["y"] = 0,
+["relPoint"] = "LEFT",
+["point"] = "LEFT",
+["x"] = 115,
+},
+},
+["PADDUP"] = {
+["type"] = "GroupButton",
+["pos"] = {
+["y"] = 25,
+["relPoint"] = "LEFT",
+["point"] = "LEFT",
+["x"] = 72,
+},
+},
+},
+["pos"] = {
+["y"] = 110,
+["strata"] = "MEDIUM",
+["offsetscale"] = false,
+["point"] = "BOTTOM",
+["level"] = 2,
+["x"] = -15,
+["relPoint"] = "BOTTOM",
+},
+},
+},
+["visibility"] = "[petbattle] hide; show",
+["name"] = "FFXIV",
+["desc"] = "FFXIV Inspired hotbars by MojiTheMonk",
+},
+}

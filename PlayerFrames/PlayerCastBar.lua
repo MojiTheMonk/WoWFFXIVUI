@@ -1,24 +1,18 @@
 local addonID, addonEnv = ...
 
---print("FFXIV UI Player Cast Bar loaded")
-
-
 local SCALE = 100
 local function s(x) return x * SCALE / 100 end
-
 
 local frame = CreateFrame("Frame", "PlayerCastBarFrame", UIParent)
 frame:SetSize(s(232), s(230))
 frame:SetPoint("CENTER", UIParent, "CENTER", s(0), s(0))
 frame:SetFrameStrata("MEDIUM")
- 
 frame:Hide()
 
 if PlayerCastingBarFrame then
     PlayerCastingBarFrame:UnregisterAllEvents()
     PlayerCastingBarFrame:Hide()
 end
-
 
 local bg = frame:CreateTexture(nil, "BACKGROUND")
 bg:SetAllPoints()
@@ -27,7 +21,7 @@ bg:SetTexture("Interface\\AddOns\\FFXIV_UI\\Media\\Textures\\PlayerFrame\\Backgr
 local castBar = CreateFrame("StatusBar", nil, frame)
 castBar:SetPoint("TOPLEFT", s(4), s(-4))
 castBar:SetPoint("BOTTOMRIGHT", s(-4), s(4))
-castBar:SetStatusBarTexture("Interface\\AddOns\\FFXIV_UI\\Media\\Textures\\PlayerFrame\\ClassResources\\Primary\\Mana") 
+castBar:SetStatusBarTexture("Interface\\AddOns\\FFXIV_UI\\Media\\Textures\\PlayerFrame\\ClassResources\\Primary\\Mana")
 castBar:SetMinMaxValues(0,1)
 castBar:SetValue(0)
 castBar:Hide()
@@ -57,14 +51,12 @@ spellButton.cooldown = CreateFrame("Cooldown", nil, spellButton, "CooldownFrameT
 spellButton.cooldown:SetAllPoints()
 spellButton.cooldown:SetDrawSwipe(true)
 
-
 local Masque = LibStub and LibStub("Masque", true)
 local MasqueGroup
 if Masque then
     MasqueGroup = Masque:Group("FFXIV UI Player Cast Bar", "Player Cast Bar")
     MasqueGroup:AddButton(spellButton, { Icon = spellButton.icon, Cooldown = spellButton.cooldown })
 end
-
 
 local spellText = outlineFrame:CreateFontString(nil, "OVERLAY")
 spellText:SetFont("Interface\\AddOns\\FFXIV_UI\\Media\\Fonts\\AxisRegular.ttf", s(18))
@@ -74,7 +66,6 @@ spellText:SetDrawLayer("OVERLAY", 7)
 spellText:SetTextColor(252/255, 251/255, 250/255)
 spellText:SetShadowColor(0.8196, 0.7804, 0.6980)
 spellText:SetShadowOffset(0, -1)
-
 
 local hpLabel = outlineFrame:CreateFontString(nil, "OVERLAY")
 hpLabel:SetFont("Interface\\AddOns\\FFXIV_UI\\Media\\Fonts\\MiedingerMedium.ttf", s(18))
@@ -86,7 +77,6 @@ hpLabel:SetTextColor(252/255, 251/255, 250/255)
 hpLabel:SetShadowColor(0.8196, 0.7804, 0.6980)
 hpLabel:SetShadowOffset(0, -1)
 
-
 local castTimeText = outlineFrame:CreateFontString(nil, "OVERLAY")
 castTimeText:SetFont("Interface\\AddOns\\FFXIV_UI\\Media\\Fonts\\EurostileExtended.ttf", s(32))
 castTimeText:SetPoint("LEFT", hpLabel, "RIGHT", s(8), -3)
@@ -97,16 +87,14 @@ castTimeText:SetShadowColor(0.8196, 0.7804, 0.6980)
 castTimeText:SetShadowOffset(0, -1)
 castTimeText:SetText("00.00")
 
-local interruptedFrame = CreateFrame("Frame", nil, frame) 
+local interruptedFrame = CreateFrame("Frame", nil, frame)
 interruptedFrame:SetFrameStrata("HIGH")
 interruptedFrame:SetFrameLevel(frame:GetFrameLevel() + 50)
 interruptedFrame:SetSize(frame:GetWidth(), frame:GetHeight())
-
-interruptedFrame:SetPoint("CENTER", frame, "CENTER", -30, -10) 
+interruptedFrame:SetPoint("CENTER", frame, "CENTER", -30, -10)
 
 local interruptedText = interruptedFrame:CreateFontString(nil, "OVERLAY")
-
-interruptedText:SetFont("Interface\\AddOns\\FFXIV_UI\\Media\\Fonts\\EurostileExtendedBlack.ttf", 29) 
+interruptedText:SetFont("Interface\\AddOns\\FFXIV_UI\\Media\\Fonts\\EurostileExtendedBlack.ttf", 29)
 interruptedText:SetTextColor(252/255, 251/255, 250/255)
 interruptedText:SetShadowColor(0,0,0)
 interruptedText:SetShadowOffset(1, -1)
@@ -115,21 +103,17 @@ interruptedText:SetDrawLayer("OVERLAY", 10)
 interruptedText:SetJustifyH("CENTER")
 interruptedText:Hide()
 
-
 interruptedText.targetOffsetX = 0
 interruptedText.startOffsetX = 50
 interruptedText.currentOffsetX = interruptedText.startOffsetX
 interruptedText.isAnimating = false
 interruptedText:SetPoint("CENTER", interruptedFrame, "CENTER", interruptedText.currentOffsetX, 0)
 
-
 local startTime, endTime = 0,0
 local displayedProgress = 0
 local hideTimer = 0
 local frozenProgress = 0
 local isChanneling = false
-
-
 
 local function DarkenAll()
     bg:SetVertexColor(0.5,0.5,0.5)
@@ -159,9 +143,21 @@ local fadeOutDuration = 0.25
 local isFadingOut = false
 local fadeElapsed = 0
 
+local function CancelFadeOut()
+    isFadingOut = false
+    fadeElapsed = 0
+    frame:SetAlpha(1)
+    castBar:SetAlpha(1)
+    spellButton:SetAlpha(1)
+    spellButton.icon:SetAlpha(1)
+    spellText:SetAlpha(1)
+    hpLabel:SetAlpha(1)
+    castTimeText:SetAlpha(1)
+    interruptedText:SetAlpha(1)
+    outlineFrame:SetAlpha(1)
+end
 
 castBar:SetScript("OnUpdate", function(self, elapsed)
- 
     if hideTimer > 0 then
         hideTimer = hideTimer - elapsed
         castBar:SetValue(frozenProgress)
@@ -171,7 +167,6 @@ castBar:SetScript("OnUpdate", function(self, elapsed)
         local sec = math.floor(remaining)
         local centi = math.floor((remaining-sec)*100)
         castTimeText:SetText(string.format("%02d.%02d", sec, centi))
-
         if hideTimer <= 0 then
             fadeElapsed = 0
             isFadingOut = true
@@ -180,11 +175,9 @@ castBar:SetScript("OnUpdate", function(self, elapsed)
         return
     end
 
-
     if isFadingOut then
         fadeElapsed = fadeElapsed + elapsed
         local alpha = math.max(0, 1 - fadeElapsed / fadeOutDuration)
-
         frame:SetAlpha(alpha)
         castBar:SetAlpha(alpha)
         spellButton:SetAlpha(alpha)
@@ -194,8 +187,11 @@ castBar:SetScript("OnUpdate", function(self, elapsed)
         castTimeText:SetAlpha(alpha)
         interruptedText:SetAlpha(alpha)
         outlineFrame:SetAlpha(alpha)
-
         if alpha <= 0 then
+            if startTime ~= 0 then
+                isFadingOut = false
+                return
+            end
             isFadingOut = false
             frame:Hide()
             castBar:Hide()
@@ -224,7 +220,6 @@ castBar:SetScript("OnUpdate", function(self, elapsed)
         castTimeText:SetText("00.00")
         return
     end
-
 
     local now = GetTime()
     local total = endTime - startTime
@@ -257,7 +252,6 @@ castBar:SetScript("OnUpdate", function(self, elapsed)
     end
 end)
 
-
 interruptedFrame:SetScript("OnUpdate", function(self, elapsed)
     if interruptedText.isAnimating then
         local speed = 300
@@ -281,7 +275,6 @@ interruptedFrame:SetScript("OnUpdate", function(self, elapsed)
             else
                 interruptedText:Show()
             end
-
             interruptedText.flashCount = interruptedText.flashCount + 0.5
             if interruptedText.flashCount >= 4 then
                 interruptedText.isFlashing = false
@@ -292,7 +285,6 @@ interruptedFrame:SetScript("OnUpdate", function(self, elapsed)
         end
     end
 end)
-
 
 frame:RegisterEvent("UNIT_SPELLCAST_START")
 frame:RegisterEvent("UNIT_SPELLCAST_STOP")
@@ -305,7 +297,6 @@ frame:RegisterEvent("UNIT_SPELLCAST_EMPOWER_START")
 frame:SetScript("OnEvent", function(self, event, unit)
     if unit ~= "player" then return end
 
-   
     local function ResetCastBar()
         frame:Hide()
         castBar:Hide()
@@ -335,6 +326,8 @@ frame:SetScript("OnEvent", function(self, event, unit)
         local spellName, _, spellIconPath, startMS, endMS = UnitCastingInfo("player")
         if not spellName then return end
 
+        CancelFadeOut()
+
         interruptedText:Hide()
         interruptedText.isAnimating = false
         interruptedText.isFlashing = false
@@ -361,6 +354,8 @@ frame:SetScript("OnEvent", function(self, event, unit)
         local spellName, _, spellIconPath, startMS, endMS = UnitChannelInfo("player")
         if not spellName then return end
 
+        CancelFadeOut()
+
         interruptedText:Hide()
         interruptedText.isAnimating = false
         interruptedText.isFlashing = false
@@ -383,43 +378,39 @@ frame:SetScript("OnEvent", function(self, event, unit)
             if MasqueGroup then MasqueGroup:ReSkin(spellButton) end
         end
 
-
     else
-        local spellName, _, _, _, _ = UnitCastingInfo("player")
-
-    
-if event == "UNIT_SPELLCAST_CHANNEL_STOP" then
-    if isChanneling then
-    
-        if not UnitChannelInfo("player") then
-            ResetCastBar()
-            return
+        if event == "UNIT_SPELLCAST_CHANNEL_STOP" then
+            if isChanneling then
+                if not UnitChannelInfo("player") then
+                    ResetCastBar()
+                    return
+                end
+                hideTimer = 2.2
+                frozenProgress = displayedProgress
+                startTime = 0
+                endTime = 0
+                DarkenAll()
+                if not interruptedText:IsShown() then
+                    interruptedText.currentOffsetX = interruptedText.startOffsetX
+                    interruptedText.isAnimating = true
+                    interruptedText:SetPoint("CENTER", interruptedFrame, "CENTER", interruptedText.currentOffsetX, 0)
+                    interruptedText:Show()
+                end
+                return
+            end
         end
 
-     
-        hideTimer = 2.2
-        frozenProgress = displayedProgress
-        startTime = 0
-        endTime = 0
-        DarkenAll()
+        if event == "UNIT_SPELLCAST_INTERRUPTED" or event == "UNIT_SPELLCAST_FAILED" then
+            local stillCasting = UnitCastingInfo("player")
+            local stillChanneling = UnitChannelInfo("player")
+            if stillCasting or stillChanneling then return end
 
-        if not interruptedText:IsShown() then
-            interruptedText.currentOffsetX = interruptedText.startOffsetX
-            interruptedText.isAnimating = true
-            interruptedText:SetPoint("CENTER", interruptedFrame, "CENTER", interruptedText.currentOffsetX, 0)
-            interruptedText:Show()
-        end
-        return
-    end
-end
-
-
-        if event == "UNIT_SPELLCAST_INTERRUPTED" or (event == "UNIT_SPELLCAST_FAILED" and spellName) then
             hideTimer = 2.2
             frozenProgress = displayedProgress
             startTime = 0
             endTime = 0
             DarkenAll()
+
             if not interruptedText:IsShown() then
                 interruptedText.currentOffsetX = interruptedText.startOffsetX
                 interruptedText.isAnimating = true
@@ -429,6 +420,7 @@ end
         end
     end
 end)
+
 local anchor = FFXIV_UI_Anchors.PlayerCast
 frame:SetParent(anchor)
 frame:ClearAllPoints()

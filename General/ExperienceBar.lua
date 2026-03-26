@@ -1,4 +1,4 @@
-﻿print("FFXIV UI Player XP Frame loaded")
+﻿--print("FFXIV UI Player XP Frame loaded")
 
 local SCALE = 100
 local function s(x) return x * SCALE / 100 end

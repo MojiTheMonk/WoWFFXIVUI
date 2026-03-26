@@ -1,3 +1,5 @@
+ 
+
 local addonID, addonEnv = ...
 
 --print("FFXIV UI Target Buffs loaded")
@@ -29,14 +31,17 @@ local function ClearCooldown(cd)
 	cd:Clear()
 end
 
-local function SetCooldown(cd, expiration, duration, enable)
-	if enable then
+local function SetCooldown(cd, unit, auraInstanceID)
+	local durationObject = C_UnitAuras.GetAuraDuration(unit, auraInstanceID)
+
+	if durationObject then
 		cd:SetDrawEdge(false)
-		cd:SetCooldownFromExpirationTime(expiration, duration)
+		cd:SetCooldownFromDurationObject(durationObject)
 	else
-		ClearCooldown(cd)
+		cd:Clear()
 	end
 end
+
 
 
 local function CreateAuraSlot(parent, index)
@@ -102,39 +107,37 @@ local function RefreshTargetAuras()
 	local filter = AuraUtil.CreateFilterString(AuraUtil.AuraFilters.Helpful)
 	local auras = C_UnitAuras.GetUnitAuras("target", filter, AURA_LIMIT)
 
-	for i = 1, AURA_LIMIT do
-		local slot = rootFrame.slots[i]
-		local aura = auras and auras[i]
+for i = 1, AURA_LIMIT do
+    local slot = rootFrame.slots[i]
+    local aura = auras and auras[i]
 
-		if aura then
-			slot.texture:SetTexture(aura.icon)
+if aura then
+    slot.texture:SetTexture(aura.icon)
 
-			 local stacks = aura.applications
+    local stacks = aura.applications
 			 local stackString = C_StringUtil.TruncateWhenZero(stacks)
 
 		 
 				 slot.stackText:SetText(stackString)
-					 
-			 
 
-			SetCooldown(slot.cooldown, aura.expirationTime, aura.duration, true)
-			slot.instanceID = aura.auraInstanceID
-			slot:Show()
+    SetCooldown(slot.cooldown, "target", aura.auraInstanceID)
 
-			
-			for _, region in ipairs({ slot.cooldown:GetRegions() }) do
-				if region:GetObjectType() == "FontString" then
+    slot.instanceID = aura.auraInstanceID
+    slot:Show()
 
-					region:SetFont("Interface\\AddOns\\FFXIV_UI\\Media\\Fonts\\AxisMedium.ttf", s(14) )
-					region:ClearAllPoints()
-					region:SetPoint("CENTER", slot.cooldown, "CENTER", 0, s(-20))
-        break
+    for _, region in ipairs({ slot.cooldown:GetRegions() }) do
+        if region:GetObjectType() == "FontString" then
+            region:SetFont("Interface\\AddOns\\FFXIV_UI\\Media\\Fonts\\AxisMedium.ttf", s(14))
+            region:ClearAllPoints()
+            region:SetPoint("CENTER", slot.cooldown, "CENTER", 0, s(-20))
+            break
+        end
     end
+else
+    slot:Hide()
 end
+ 
 
-		else
-			slot:Hide()
-		end
 	end
 end
 
@@ -155,10 +158,13 @@ end
 
 UpdateRootSize()
 AnchorToFFTargetFrame()
-C_Timer.NewTicker(REFRESH_INTERVAL, RefreshTargetAuras)
+ 
 
 
 local anchor = FFXIV_UI_Anchors.TargetAuras
 rootFrame:SetParent(anchor)
 rootFrame:ClearAllPoints()
 rootFrame:SetPoint("CENTER", anchor, "CENTER", 0, 0)
+
+
+ 

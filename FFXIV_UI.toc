@@ -5,7 +5,7 @@
 ## Version: 1.0
 
 ## OptionalDeps: Masque
-## SavedVariables: FFXIV_UI_DB
+## SavedVariablesPerCharacter: FFXIV_UI_DB
 ## IconTexture: Interface\AddOns\FFXIV_UI\Media\Textures\Icon
 
  

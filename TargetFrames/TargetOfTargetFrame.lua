@@ -1,4 +1,4 @@
-﻿
+
 local targetFrame = CreateFrame("Frame", nil, UIParent)
 local f = targetFrame
 
@@ -110,32 +110,13 @@ end
 local function UpdateColors()
     if not UnitExists("targettarget") then return end
 
-  
-if UnitIsUnit("targettarget", "player")
-    or UnitInParty("targettarget")
-    or UnitInRaid("targettarget") then
+    local unit = "targettarget"
+    local reaction = UnitReaction(unit, "player")
+    local isPlayer = UnitIsPlayer(unit)
 
+    local inCombatWithTargetTarget = UnitAffectingCombat("player") and UnitCanAttack("player", unit)
 
-    bg:SetVertexColor(unpack(COLORS.player))
-    outline:SetVertexColor(unpack(COLORS.player))
-
-
-    bar:SetStatusBarColor(1, 1, 1, 1)
-
-  
-    local r, g, b = unpack(COLORS.player)
-    local sr, sg, sb = DarkenColor(r, g, b, 0.6)
-
-    nameText:SetTextColor(r, g, b)
-    nameText:SetShadowColor(sr, sg, sb)
-
-    return
-end
-
-
-    local inCombatWithTargetTarget = UnitAffectingCombat("player") and UnitCanAttack("player", "targettarget")
-
-    if UnitIsDeadOrGhost("targettarget") then
+    if UnitIsDeadOrGhost(unit) then
         bg:SetVertexColor(unpack(COLORS.dead))
         outline:SetVertexColor(unpack(COLORS.dead))
         SetBarAndTextColor(0.4, 0.4, 0.4)
@@ -149,38 +130,34 @@ end
         return
     end
 
-    if UnitIsPlayer("targettarget") then
-        bg:SetVertexColor(unpack(COLORS.player))
-        outline:SetVertexColor(unpack(COLORS.player))
-        SetBarAndTextColor(unpack(COLORS.player))
-        return
-    end
-
-    local reaction = UnitReaction("targettarget", "player")
     if reaction then
         if reaction <= 3 then
+         
             bg:SetVertexColor(unpack(COLORS.hostile))
             outline:SetVertexColor(unpack(COLORS.hostile))
             SetBarAndTextColor(1.0, 0.8, 0.8)
+
         elseif reaction == 4 then
+      
             bg:SetVertexColor(unpack(COLORS.neutral))
             outline:SetVertexColor(unpack(COLORS.neutral))
             SetBarAndTextColor(235/255, 222/255, 129/255)
+
         else
+     
+            if isPlayer then
+                bg:SetVertexColor(unpack(COLORS.player))
+                outline:SetVertexColor(unpack(COLORS.player))
+                SetBarAndTextColor(unpack(COLORS.player))
+            else
+              
+                nameText:SetTextColor(228/255,255/255,204/255)
+                nameText:SetShadowColor(113/255, 214/255, 64/255)
 
-
-
-     local r,g,b = unpack(COLORS.friendly)
-          
- 
-             nameText:SetTextColor(228/255,255/255,204/255); nameText:SetShadowColor(113/255, 214/255, 64/255)
-             
-             bg:SetVertexColor(113/255, 214/255, 64/255)
-             outline:SetVertexColor(113/255, 214/255, 64/255)
-             bar:SetStatusBarColor(228/255,255/255,204/255)
-
-
-
+                bg:SetVertexColor(113/255, 214/255, 64/255)
+                outline:SetVertexColor(113/255, 214/255, 64/255)
+                bar:SetStatusBarColor(228/255,255/255,204/255)
+            end
         end
     else
         bg:SetVertexColor(unpack(COLORS.neutral))

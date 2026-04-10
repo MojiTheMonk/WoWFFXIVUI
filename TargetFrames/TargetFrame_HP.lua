@@ -1,4 +1,4 @@
-﻿
+
 --print("FFXIV UI Target Frame loaded")
 
 TargetFrame:Hide()
@@ -151,11 +151,11 @@ end
 local function UpdateColors()
     if not UnitExists("target") then return end
    -- rareIcon:Hide()
+   rareIcon:Hide()
 
 
 
-
-    if UnitIsUnit("target", "player") or UnitInParty("target") or UnitInRaid("target") then
+    if UnitIsUnit("target", "player") or (UnitIsPlayer("target") and (UnitInParty("target") or UnitInRaid("target"))) then
         bg:SetVertexColor(unpack(COLORS.player))
         outline:SetVertexColor(unpack(COLORS.player))
         bar:SetStatusBarColor(1,1,1)
@@ -227,12 +227,7 @@ local function UpdateColors()
 
         local classification = UnitClassification("target")
 
-    if classification == "rare" or classification == "rareelite" then
-        
-        
-        rareIcon:Show()
-            
-    end
+  
 
 
     else
@@ -241,15 +236,18 @@ local function UpdateColors()
         SetBarAndTextColor(235/255,222/255,129/255)
     end
 
-    -- Rare check (always evaluate regardless of combat/reaction)
-local classification = UnitClassification("target")
-if classification == "rare" or classification == "rareelite" then
-    rareIcon:Show()
-else
-    rareIcon:Hide()
+    
+ 
 end
-end
+local function UpdateRareIcon()
+    local classification = UnitClassification("target")
 
+    if classification == "rare" or classification == "rareelite" then
+        rareIcon:Show()
+    else
+        rareIcon:Hide()
+    end
+end
 
 local function Update()
     if UnitExists("target") then
@@ -267,6 +265,7 @@ local function Update()
         levelText:SetText(level == -1 and "??" or level)
 
         UpdateColors()
+        UpdateRareIcon()
 
         local inCombatWithTarget = UnitAffectingCombat("player") and UnitCanAttack("player","target")
 
@@ -294,6 +293,8 @@ local function Update()
         else
             raidIcon:Hide()
         end
+
+         
 
     else
         HideFrame()

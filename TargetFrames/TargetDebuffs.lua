@@ -1,18 +1,11 @@
- 
 local addonID, addonEnv = ...
-
---print("FFXIV UI Target Debuffs loaded")
 
 local SCALE = 100
 local function s(x)
     return x * SCALE / 100
 end
 
-local rootFrame = CreateFrame("Frame", addonID .. "_Debuffs", UIParent)
-rootFrame:SetSize(1, 1)
-
-rootFrame.bg = rootFrame:CreateTexture(nil, "BACKGROUND", nil, -8)
-rootFrame.bg:SetAllPoints()
+local AURA_ICON_SIZE, AURA_GAP, AURA_LIMIT = s(38), s(0), 20
 
 local Masque = LibStub and LibStub("Masque", true)
 local MasqueGroup
@@ -20,49 +13,86 @@ if Masque then
     MasqueGroup = Masque:Group("FFXIV Target Debuffs", "Target Debuffs")
 end
 
-local AURA_ICON_SIZE, AURA_GAP, AURA_LIMIT, REFRESH_INTERVAL, WIDTH_EXTENSION =
-    s(38), s(0), 20, 0.5, 1.10
+local formatter = C_StringUtil.CreateNumericRuleFormatter()
+formatter:AddBreakpoint({
+	threshold = 0,
+	format = "%d",
+	step = 1,
+	rounding = 1,
+})
+formatter:AddBreakpoint({
+	threshold = 60,
+	format = "%dm",
+	components = { { div = 60, step = 1, rounding = 1 } },
+})
+formatter:AddBreakpoint({
+	threshold = 3600,
+	format = "%dh",
+	components = { { div = 3600, step = 1, rounding = 1 } },
+})
 
-rootFrame.slots = {}
+local rootFrame = CreateFrame("AuraContainer", addonID .. "_Debuffs", UIParent, "CustomAuraContainerTemplate")
+rootFrame:SetSize(1, 1)
+rootFrame.bg = rootFrame:CreateTexture(nil, "BACKGROUND", nil, -8)
+rootFrame.bg:SetAllPoints()
 
-local function CreateAuraSlot(parent, index)
-    local slot = CreateFrame("Button", nil, parent)
+rootFrame:SetFlowLayoutAnchorPoint("LEFT")
+rootFrame:SetFlowLayoutGrowthDirection(AnchorUtil.FlowDirection.Right, AnchorUtil.FlowDirection.Down)
+rootFrame:SetUnit("target")
+
+local harmfulFilter = AuraUtil.CreateFilterString(AuraUtil.AuraFilters.Harmful)
+
+local function InitializeAuraSlot(slot)
     slot:SetSize(AURA_ICON_SIZE, AURA_ICON_SIZE)
-
-    if index == 1 then
-        slot:SetPoint("LEFT", parent, "LEFT", 0, 0)
-    else
-        slot:SetPoint("LEFT", parent.slots[index - 1], "RIGHT", AURA_GAP, 0)
-    end
 
     slot.texture = slot:CreateTexture(nil, "BACKGROUND")
     slot.texture:SetAllPoints()
     slot.texture:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+    slot:SetIcon(slot.texture)
 
     slot.cooldown = CreateFrame("Cooldown", nil, slot, "CooldownFrameTemplate")
     slot.cooldown:SetAllPoints()
     slot.cooldown:SetDrawSwipe(false)
+    slot.cooldown:SetDrawEdge(false)
+    slot.cooldown:SetHideCountdownNumbers(true)
+    slot:SetDurationCooldown(slot.cooldown)
 
-    for _, region in ipairs({ slot.cooldown:GetRegions() }) do
-        if region:GetObjectType() == "FontString" then
-            region:SetFont("Interface\\AddOns\\FFXIV_UI\\Media\\Fonts\\AxisMedium.ttf", s(14))
-            region:ClearAllPoints()
-            region:SetPoint("CENTER", slot.cooldown, "CENTER", 0, s(-20))
-            break
-        end
-    end
+    local overlay = CreateFrame("Frame", nil, slot)
+    overlay:SetAllPoints(slot)
+    overlay:SetFrameLevel(slot:GetFrameLevel() + 5)
+    overlay:EnableMouse(true)
+    overlay:SetMouseClickEnabled(false)
 
-    slot.stackText = slot:CreateFontString(nil, "OVERLAY")
+    slot.stackText = overlay:CreateFontString(nil, "OVERLAY")
     slot.stackText:SetFont(STANDARD_TEXT_FONT, s(12), "OUTLINE")
     slot.stackText:SetPoint("BOTTOMRIGHT", s(-2), s(2))
+    slot:SetApplicationCount(slot.stackText)
 
-    slot:SetScript("OnEnter", function(self)
-        if self.instanceID then
+    slot.cooldownText = overlay:CreateFontString(nil, "OVERLAY")
+    slot.cooldownText:SetFont("Interface\\AddOns\\FFXIV_UI\\Media\\Fonts\\AxisMedium.ttf", s(14))
+    slot.cooldownText:SetPoint("CENTER", overlay, "CENTER", 0, s(-20))
+
+    slot:SetDurationText(slot.cooldownText, {
+		textFormat = {
+			formatString = "{}",
+			components = {
+				{
+					property = 0,
+					formatter = formatter
+				}
+			}
+		}
+	})
+
+    overlay:SetScript("OnEnter", function(self)
+        local parentSlot = self:GetParent()
+        local auraInstanceID = parentSlot and parentSlot:GetAuraInstanceID()
+        if auraInstanceID then
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-            GameTooltip:SetUnitDebuffByAuraInstanceID("target", self.instanceID)
+            GameTooltip:SetUnitDebuffByAuraInstanceID("target", auraInstanceID)
         end
     end)
-    slot:SetScript("OnLeave", GameTooltip_Hide)
+    overlay:SetScript("OnLeave", GameTooltip_Hide)
 
     if MasqueGroup then
         MasqueGroup:AddButton(slot, {
@@ -71,10 +101,29 @@ local function CreateAuraSlot(parent, index)
             Count = slot.stackText
         })
     end
-
-    slot:Hide()
-    return slot
 end
+
+rootFrame:AddAuraGroup("debuffs", harmfulFilter, {
+    maxFrameCount = AURA_LIMIT,
+    initializeFrame = InitializeAuraSlot
+})
+rootFrame:SetAuraGroupLayout("debuffs", { elementSpacingX = AURA_GAP })
+rootFrame:SetEnabled(true)
+
+local eventWatcher = CreateFrame("Frame")
+eventWatcher:SetScript("OnEvent", function(self, event)
+    if event == "PLAYER_TARGET_CHANGED" then
+        if not UnitExists("target") then
+            rootFrame:SetEnabled(false)
+            rootFrame:Hide()
+        else
+            rootFrame:SetEnabled(true)
+            rootFrame:Show()
+            rootFrame:UpdateAllAuras()
+        end
+    end
+end)
+eventWatcher:RegisterEvent("PLAYER_TARGET_CHANGED")
 
 local function AnchorToFFTargetFrame()
     assert(FFTargetFrame, "FFTargetFrame not found")
@@ -82,73 +131,9 @@ local function AnchorToFFTargetFrame()
     rootFrame:SetPoint("TOPLEFT", FFTargetFrame, "BOTTOMLEFT", s(5), s(250))
 end
 
-local function UpdateRootSize()
-    local baseWidth = (AURA_ICON_SIZE * AURA_LIMIT) + (AURA_GAP * (AURA_LIMIT - 1))
-    rootFrame:SetSize(baseWidth * WIDTH_EXTENSION, AURA_ICON_SIZE)
-end
-
-local function ClearCooldown(cd)
-    cd:Clear()
-end
-
-local function RefreshTargetAuras()
-    if not UnitExists("target") then
-        for _, slot in ipairs(rootFrame.slots) do
-            slot:Hide()
-        end
-        return
-    end
-
-    local filter = AuraUtil.CreateFilterString(AuraUtil.AuraFilters.Harmful)
-    local auras = C_UnitAuras.GetUnitAuras("target", filter, AURA_LIMIT)
-
-    for i = 1, AURA_LIMIT do
-        local slot = rootFrame.slots[i]
-        local aura = auras and auras[i]
-
-        if aura then
-            slot.texture:SetTexture(aura.icon)
-
-            local stacks = aura.applications
-            local stackString = C_StringUtil.TruncateWhenZero(stacks)
-            slot.stackText:SetText(stackString)
-
-            local durationObject = C_UnitAuras.GetAuraDuration("target", aura.auraInstanceID)
-
-            if durationObject then
-                slot.cooldown:SetCooldownFromDurationObject(durationObject)
-                slot.cooldown:SetDrawEdge(false)
-            else
-                slot.cooldown:Clear()
-            end
-
-            slot.instanceID = aura.auraInstanceID
-            slot:Show()
-        else
-            slot:Hide()
-        end
-    end
-end
-
-rootFrame:SetScript("OnEvent", function(_, event)
-    if event == "PLAYER_TARGET_CHANGED" or event == "UNIT_AURA" then
-        RefreshTargetAuras()
-    end
-end)
-
-rootFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
-rootFrame:RegisterUnitEvent("UNIT_AURA", "target")
-
-for i = 1, AURA_LIMIT do
-    rootFrame.slots[i] = CreateAuraSlot(rootFrame, i)
-end
-
-UpdateRootSize()
 AnchorToFFTargetFrame()
-C_Timer.NewTicker(REFRESH_INTERVAL, RefreshTargetAuras)
 
 local anchor = FFXIV_UI_Anchors.TargetDebuffs
 rootFrame:SetParent(anchor)
 rootFrame:ClearAllPoints()
-rootFrame:SetPoint("CENTER", anchor, "CENTER", 0, 0)
- 
+rootFrame:SetPoint("LEFT", anchor, "LEFT", 0, 0)
